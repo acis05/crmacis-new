@@ -1,0 +1,87 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+enum Role { ADMIN SALES }
+enum LeadStatus { NEW PROSPECT WON LOST }
+enum ActivityType { NOTE CALL WHATSAPP MEETING }
+enum FollowUpStatus { PENDING DONE CANCELLED }
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  email String @unique
+  passwordHash String
+  role Role @default(SALES)
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  assignedLeads Lead[] @relation("Assigned")
+  createdLeads Lead[] @relation("Created")
+  activities Activity[]
+  followUps FollowUp[]
+  statusChanges StatusHistory[]
+  analyses AiAnalysis[]
+}
+model Lead {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  phone String
+  email String?
+  source String?
+  product String?
+  estimatedValue Decimal @default(0) @db.Decimal(15,2)
+  closedValue Decimal? @db.Decimal(15,2)
+  status LeadStatus @default(NEW)
+  lostReason String?
+  closedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assignedToId String @db.Uuid
+  createdById String @db.Uuid
+  assignedTo User @relation("Assigned", fields:[assignedToId],references:[id])
+  createdBy User @relation("Created", fields:[createdById],references:[id])
+  activities Activity[]
+  followUps FollowUp[]
+  history StatusHistory[]
+  @@index([assignedToId,status])
+  @@index([createdAt])
+}
+model Activity {
+  id String @id @default(uuid()) @db.Uuid
+  leadId String @db.Uuid
+  userId String @db.Uuid
+  type ActivityType @default(NOTE)
+  notes String
+  createdAt DateTime @default(now())
+  lead Lead @relation(fields:[leadId],references:[id],onDelete:Cascade)
+  user User @relation(fields:[userId],references:[id])
+  @@index([leadId,createdAt])
+}
+model FollowUp {
+  id String @id @default(uuid()) @db.Uuid
+  leadId String @db.Uuid
+  userId String @db.Uuid
+  dueAt DateTime
+  notes String?
+  status FollowUpStatus @default(PENDING)
+  completedAt DateTime?
+  lead Lead @relation(fields:[leadId],references:[id],onDelete:Cascade)
+  user User @relation(fields:[userId],references:[id])
+  @@index([userId,dueAt])
+}
+model StatusHistory {
+  id String @id @default(uuid()) @db.Uuid
+  leadId String @db.Uuid
+  userId String @db.Uuid
+  oldStatus LeadStatus
+  newStatus LeadStatus
+  changedAt DateTime @default(now())
+  lead Lead @relation(fields:[leadId],references:[id],onDelete:Cascade)
+  user User @relation(fields:[userId],references:[id])
+}
+model AiAnalysis {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  question String
+  response String
+  scope String
+  createdAt DateTime @default(now())
+  user User @relation(fields:[userId],references:[id])
+}

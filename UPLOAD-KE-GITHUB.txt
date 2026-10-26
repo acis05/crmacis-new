@@ -1,0 +1,12 @@
+CARA UPLOAD VIA WEBSITE GITHUB
+
+1. Extract ZIP ini terlebih dahulu (jangan upload ZIP).
+2. Buka folder simplecrm-ai-upload-github.
+3. Di repository GitHub pilih Add file > Upload files.
+4. Drag semua ISI folder ke area upload, bukan ZIP atau folder pembungkus.
+5. Pastikan prisma/schema.prisma muncul pada daftar file sebelum Commit changes.
+6. Commit changes.
+
+Jika GitHub menampilkan Something went really wrong bahkan untuk satu file, coba Chrome/Edge mode Incognito, matikan ekstensi, atau gunakan koneksi lain. Membuat ZIP baru tidak menjamin memperbaiki masalah uploader browser.
+
+Setelah GitHub berhasil, ikuti README.md untuk konfigurasi Railway.
