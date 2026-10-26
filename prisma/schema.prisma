@@ -1,6 +1,36 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "postgresql" url = env("DATABASE_URL") }
-enum Role { ADMIN SALES }
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  SALES
+}
+
+enum LeadStatus {
+  NEW
+  PROSPECT
+  WON
+  LOST
+}
+
+enum ActivityType {
+  NOTE
+  CALL
+  WHATSAPP
+  MEETING
+}
+
+enum FollowUpStatus {
+  PENDING
+  DONE
+  CANCELLED
+}
 enum LeadStatus { NEW PROSPECT WON LOST }
 enum ActivityType { NOTE CALL WHATSAPP MEETING }
 enum FollowUpStatus { PENDING DONE CANCELLED }
